@@ -58,10 +58,10 @@ qx.Class.define("ae.map.Application",
     	  center : ol.proj.fromLonLat([5.41, 35.82]),
           zoom: 4
       })
-      var layer = new ae.map.model.layer.Tiled();
+      var layer = new ae.map.model.layer.Tile();
       layer.setSource(new ol.source.OSM());
       var layers = new qx.data.Array();
-      layers.push(new ol.source.OSM());
+      layers.push(layer);
       
       mapModel.setLayers(layers);
       mapModel.setView(view);

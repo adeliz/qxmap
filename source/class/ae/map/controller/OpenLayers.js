@@ -61,8 +61,17 @@ qx.Class.define("ae.map.controller.OpenLayers",
 			this.getOlmap().getView().setCenter(model.getView().getCenter());
 			
 			for(var i=0; i<model.getLayers().length;i++){
-				var tiled = new ol.layer.Tile({source:model.getLayers().getItem(i)});
-				this.getOlmap().getLayers().push(tiled);
+				var layer = model.getLayers().getItem(i);
+				var olLayer;
+				switch(layer.classname){
+					case "ae.map.model.layer.Tile" :
+						var olLayer = new ol.layer.Tile({source:model.getLayers().getItem(i).getSource()});
+						break
+					case "ae.map.model.layer.Vector" :
+						break
+				}
+				
+				this.getOlmap().getLayers().push(olLayer);
 			}
 
 		}

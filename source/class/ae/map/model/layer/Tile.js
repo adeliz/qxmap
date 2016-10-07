@@ -1,7 +1,7 @@
 /**
  * Tiled layer
  */
-qx.Class.define("ae.map.model.layer.Tiled", {
+qx.Class.define("ae.map.model.layer.Tile", {
 	extend : qx.core.Object,
 
 	properties : {
