@@ -59,7 +59,7 @@ qx.Class.define("ae.map.Application",
           zoom: 4
       })
       var layer = new ae.map.model.layer.Tile();
-      layer.setSource(new ol.source.OSM());
+      layer.setSource(new ae.map.model.source.OSM());
       var layers = new qx.data.Array();
       layers.push(layer);
       

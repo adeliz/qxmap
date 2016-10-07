@@ -65,7 +65,15 @@ qx.Class.define("ae.map.controller.OpenLayers",
 				var olLayer;
 				switch(layer.classname){
 					case "ae.map.model.layer.Tile" :
-						var olLayer = new ol.layer.Tile({source:model.getLayers().getItem(i).getSource()});
+						var olSource;
+						switch(layer.getSource().classname){
+							case "ae.map.model.source.OSM" :
+								olSource = new ol.source.OSM();
+								break;
+							case "ae.map.model.source.TileWMS" :
+								break;
+						}
+						var olLayer = new ol.layer.Tile({source:olSource});
 						break
 					case "ae.map.model.layer.Vector" :
 						break
