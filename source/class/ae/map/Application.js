@@ -60,8 +60,33 @@ qx.Class.define("ae.map.Application",
       })
       var layer = new ae.map.model.layer.Tile();
       layer.setSource(new ae.map.model.source.OSM());
+      
+      var feature = new ae.map.model.Feature().set({
+    	  geometry : new ae.map.model.geom.Point().set({
+        	  coordinates : ol.proj.fromLonLat([5.41, 25.82])
+          })
+      });
+      
+      var feature2 = new ae.map.model.Feature().set({
+    	  geometry : new ae.map.model.geom.Point().set({
+        	  coordinates : ol.proj.fromLonLat([0.41, 20.82])
+          })
+      });
+      //console.log(feature.getGeometry().getCoordinates());
+      var features = new qx.data.Array();
+      features.push(feature);
+      features.push(feature2);
+      
+      var layer2 = new ae.map.model.layer.Vector().set({
+    	  source : new ae.map.model.source.Vector().set({
+    		  features : features
+    	  })
+      });
+      
       var layers = new qx.data.Array();
+      
       layers.push(layer);
+      layers.push(layer2);
       
       mapModel.setLayers(layers);
       mapModel.setView(view);

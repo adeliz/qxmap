@@ -29,14 +29,11 @@ qx.Class.define("ae.map.ui.Map", {
 			/*if(this.getPlotlyDiv()){
 				new map.controller.OpenLayers(model,olmap);
 			}else{*/
-				console.log("loaded");
 				this.addListenerOnce("appear", function(e){
-					console.log("appear");
 					var olmap = this.olmap = new ol.Map({
 						target : this.getContentElement().getDomElement()
 					});
 					
-					console.log(model.getView().getZoom());
 					var controller = new ae.map.controller.OpenLayers(this.getModel(),olmap);
 
 				},this);

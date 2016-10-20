@@ -54,7 +54,6 @@ qx.Class.define("ae.map.controller.OpenLayers",
 				return;
 			}
 
-			console.log(model.getView().getCenter());
 			//Init the map with data in the model
 
 			this.getOlmap().getView().setZoom(model.getView().getZoom());
@@ -74,9 +73,32 @@ qx.Class.define("ae.map.controller.OpenLayers",
 								break;
 						}
 						var olLayer = new ol.layer.Tile({source:olSource});
-						break
+						break;
 					case "ae.map.model.layer.Vector" :
-						break
+						
+						var olFeatures = [];
+						for(var j=0;j<layer.getSource().getFeatures().length;j++){
+							var feature = layer.getSource().getFeatures().getItem(j);
+							var geometry = feature.getGeometry();
+							var olGeometry;
+							switch(geometry.classname){
+								case "ae.map.model.geom.Point" :
+									olGeometry = new ol.geom.Point(geometry.getCoordinates());
+									break;
+							}
+							
+							var olFeature = new ol.Feature({
+								geometry : olGeometry
+							});
+
+							olFeatures.push(olFeature);
+						}
+						var olSource = new ol.source.Vector({
+							features : olFeatures
+						});
+
+						olLayer = new ol.layer.Vector({source:olSource});
+						break;
 				}
 				
 				this.getOlmap().getLayers().push(olLayer);
