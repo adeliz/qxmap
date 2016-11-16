@@ -72,10 +72,17 @@ qx.Class.define("ae.map.Application",
         	  coordinates : ol.proj.fromLonLat([0.41, 20.82])
           })
       });
+      
+      var feature3 = new ae.map.model.Feature().set({
+    	  geometry : new ae.map.model.geom.LineString().set({
+        	  coordinates : [ol.proj.fromLonLat([0.41, 20.82]),ol.proj.fromLonLat([2.41, 14.82]),ol.proj.fromLonLat([5.41, 25.82])]
+          })
+      });
       //console.log(feature.getGeometry().getCoordinates());
       var features = new qx.data.Array();
       features.push(feature);
       features.push(feature2);
+      features.push(feature3);
       
       var layer2 = new ae.map.model.layer.Vector().set({
     	  source : new ae.map.model.source.Vector().set({

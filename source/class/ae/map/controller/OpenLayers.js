@@ -55,7 +55,7 @@ qx.Class.define("ae.map.controller.OpenLayers",
 			}
 
 			//Init the map with data in the model
-
+			
 			this.getOlmap().getView().setZoom(model.getView().getZoom());
 			this.getOlmap().getView().setCenter(model.getView().getCenter());
 			
@@ -68,6 +68,12 @@ qx.Class.define("ae.map.controller.OpenLayers",
 						switch(layer.getSource().classname){
 							case "ae.map.model.source.OSM" :
 								olSource = new ol.source.OSM();
+								break;
+							case "ae.map.model.source.BingMaps" :
+								olSource = new ol.source.BingMaps(layer.getSource()._options);
+								break;
+							case "ae.map.model.source.XYZ" :
+								olSource = new ol.source.XYZ(layer.getSource()._options);
 								break;
 							case "ae.map.model.source.TileWMS" :
 								break;
@@ -84,6 +90,9 @@ qx.Class.define("ae.map.controller.OpenLayers",
 							switch(geometry.classname){
 								case "ae.map.model.geom.Point" :
 									olGeometry = new ol.geom.Point(geometry.getCoordinates());
+									break;
+								case "ae.map.model.geom.LineString" :
+									olGeometry = new ol.geom.LineString(geometry.getCoordinates());
 									break;
 							}
 							

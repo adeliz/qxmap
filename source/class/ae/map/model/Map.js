@@ -37,6 +37,15 @@ qx.Class.define("ae.map.model.Map", {
 			check : "qx.data.Array",
 			//transform : "_transformLayers",
 			init : new qx.data.Array()
+		},
+		
+		/**
+		 * Interactions
+		 */
+		interactions : {
+			check : "qx.data.Array",
+			//transform : "_transformLayers",
+			init : new qx.data.Array()
 		}
 	},
 	

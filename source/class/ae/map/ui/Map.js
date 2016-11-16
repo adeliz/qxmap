@@ -3,6 +3,7 @@
  * 
  * @ignore(openlayers.*)
  * @asset(openlayers/*)
+ * @asset(ol3/*)
  */
 qx.Class.define("ae.map.ui.Map", {
 	extend : qx.ui.core.Widget,
@@ -30,8 +31,22 @@ qx.Class.define("ae.map.ui.Map", {
 				new map.controller.OpenLayers(model,olmap);
 			}else{*/
 				this.addListenerOnce("appear", function(e){
+					qx.bom.Stylesheet.includeFile('resource/ol3/ol.css');
 					var olmap = this.olmap = new ol.Map({
-						target : this.getContentElement().getDomElement()
+						target : this.getContentElement().getDomElement(),
+						//to customize later if needed...
+						interactions : 
+							[
+							 new ol.interaction.DragPan(),
+							 new ol.interaction.DragZoom(),
+							 new ol.interaction.MouseWheelZoom(),
+							  
+						],
+						controls : 
+							[
+							 new ol.control.Zoom(), 
+							 new ol.control.ScaleLine() 
+							 ]
 					});
 					
 					var controller = new ae.map.controller.OpenLayers(this.getModel(),olmap);
@@ -55,7 +70,7 @@ qx.Class.define("ae.map.ui.Map", {
 	},
 
 	members : {
-		/**
+			/**
 		 * Get Openlayers map
 		 * @return {Openlayers.Map} Openlayers map
 		 */
