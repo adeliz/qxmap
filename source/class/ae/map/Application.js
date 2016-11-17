@@ -17,7 +17,9 @@ qx.Class.define("ae.map.Application",
 {
   extend : qx.application.Standalone,
 
-
+  properties : {
+		
+	},
 
   /*
   *****************************************************************************
@@ -82,7 +84,7 @@ qx.Class.define("ae.map.Application",
       var features = new qx.data.Array();
       features.push(feature);
       features.push(feature2);
-      features.push(feature3);
+      
       
       var layer2 = new ae.map.model.layer.Vector().set({
     	  source : new ae.map.model.source.Vector().set({
@@ -90,21 +92,45 @@ qx.Class.define("ae.map.Application",
     	  })
       });
       
+      var f = new qx.data.Array();
+      f.push(feature3);
+      var layer3 = new ae.map.model.layer.Vector().set({
+    	  source : new ae.map.model.source.Vector().set({
+    		  features : f
+    	  })
+      });
+      
       var layers = new qx.data.Array();
       
       layers.push(layer);
-      layers.push(layer2);
+      
+      var group = new ae.map.model.layer.Group().set({
+    	  name:"TEst",
+    	  layers: new qx.data.Array([layer2,layer3])});
+
+      layers.push(group);
+
       
       mapModel.setLayers(layers);
       mapModel.setView(view);
       var map = new ae.map.ui.Map(mapModel);
       
-
+      var layerTree = new ae.map.ui.LayerTree();
+      
       // Document is the application root
       var doc = this.getRoot();
 
       // Add button to document at fixed coordinates
-      doc.add(map, {edge: 50});
+      var splitpane = new qx.ui.splitpane.Pane();
+      splitpane.add(layerTree);
+      splitpane.add(map);
+      
+      doc.add(splitpane, {edge: 50});
+      
+      var rootLayer = new ae.map.model.layer.Group().set({name:"Root"});
+      rootLayer.setLayers(mapModel.getLayers())
+      layerTree.treeController.setModel(rootLayer);
+      //mapModel.bind("layers[1]",layerTree.treeController,"model");
 
     }
   }

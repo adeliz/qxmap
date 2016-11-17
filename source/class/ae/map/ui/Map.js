@@ -1,9 +1,8 @@
 ﻿/**
  * Map widget
  * 
- * @ignore(openlayers.*)
+ * @ignore(ol.*)
  * @asset(openlayers/*)
- * @asset(ol3/*)
  */
 qx.Class.define("ae.map.ui.Map", {
 	extend : qx.ui.core.Widget,
@@ -31,7 +30,7 @@ qx.Class.define("ae.map.ui.Map", {
 				new map.controller.OpenLayers(model,olmap);
 			}else{*/
 				this.addListenerOnce("appear", function(e){
-					qx.bom.Stylesheet.includeFile('resource/ol3/ol.css');
+					qx.bom.Stylesheet.includeFile('resource/openlayers/ol.css');
 					var olmap = this.olmap = new ol.Map({
 						target : this.getContentElement().getDomElement(),
 						//to customize later if needed...

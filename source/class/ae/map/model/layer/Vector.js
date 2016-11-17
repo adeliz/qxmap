@@ -1,19 +1,10 @@
 /**
- * Source layer
+ * Vector layer
  */
 qx.Class.define("ae.map.model.layer.Vector", {
-	extend : qx.core.Object,
+	extend : ae.map.model.layer.Layer,
 
 	properties : {
-
-		/**
-		 * Source
-		 */
-		source : {
-			//apply : "_applyCqlfilter",
-			event : "changeSource",
-			init : null
-		}
 		
 	},
 	

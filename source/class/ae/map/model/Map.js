@@ -3,6 +3,7 @@
  */
 qx.Class.define("ae.map.model.Map", {
 	extend : qx.core.Object,
+	include :  qx.data.marshal.MEventBubbling,
 
 	construct : function (){
 		this.base(arguments);
@@ -35,8 +36,10 @@ qx.Class.define("ae.map.model.Map", {
 		 */
 		layers : {
 			check : "qx.data.Array",
+			event : "changeLayers",
 			//transform : "_transformLayers",
-			init : new qx.data.Array()
+			init : new qx.data.Array(),
+			apply : "_apply"
 		},
 		
 		/**
@@ -44,6 +47,7 @@ qx.Class.define("ae.map.model.Map", {
 		 */
 		interactions : {
 			check : "qx.data.Array",
+			event : "changeInteractions",
 			//transform : "_transformLayers",
 			init : new qx.data.Array()
 		}
@@ -111,11 +115,15 @@ qx.Class.define("ae.map.model.Map", {
 			this.fireDataEvent("raiseLayer",e);
 		},
 
+		_apply : function(value, old, name){
+			this._applyEventPropagation(value, old, name);
+		}
+		
 		/**
 		 * Generate a json string 
 		 * @return {String} model's map in json format
 		 */
-        toString : function(){
+        /*toString : function(){
             var json = {};
             json.name = this.getName();
             json.xcenter = this.getView().getCenter()[0];
@@ -124,6 +132,6 @@ qx.Class.define("ae.map.model.Map", {
             json.layers=[];
 
             return qx.lang.Json.stringify(json);
-        }
+        }*/
 	}
 });
