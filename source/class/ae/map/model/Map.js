@@ -7,7 +7,7 @@ qx.Class.define("ae.map.model.Map", {
 
 	construct : function (){
 		this.base(arguments);
-		//this.initFilters(new qx.data.Array());
+		this.initLayers(new qx.data.Array());
 		//this.addListener("")
 	},
 	
@@ -38,8 +38,8 @@ qx.Class.define("ae.map.model.Map", {
 			check : "qx.data.Array",
 			event : "changeLayers",
 			//transform : "_transformLayers",
-			init : new qx.data.Array(),
-			apply : "_apply"
+			apply : "_apply",
+			deferredInit : true
 		},
 		
 		/**

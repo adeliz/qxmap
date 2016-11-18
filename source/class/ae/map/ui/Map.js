@@ -2,7 +2,7 @@
  * Map widget
  * 
  * @ignore(ol.*)
- * @asset(openlayers/*)
+ * @asset(ol/*)
  */
 qx.Class.define("ae.map.ui.Map", {
 	extend : qx.ui.core.Widget,
@@ -30,7 +30,7 @@ qx.Class.define("ae.map.ui.Map", {
 				new map.controller.OpenLayers(model,olmap);
 			}else{*/
 				this.addListenerOnce("appear", function(e){
-					qx.bom.Stylesheet.includeFile('resource/openlayers/ol.css');
+					//qx.bom.Stylesheet.includeFile('resource/openlayers/ol.css');
 					var olmap = this.olmap = new ol.Map({
 						target : this.getContentElement().getDomElement(),
 						//to customize later if needed...
@@ -62,7 +62,8 @@ qx.Class.define("ae.map.ui.Map", {
 		
         this.addListener("resize", function (e) {
         	if(this.getOlMap()){
-        		this.getOlMap().updateSize();
+        		var olmap = this.getOlMap();
+        		setTimeout( function() { olmap.updateSize();}, 10);
         	}
             
         },this);

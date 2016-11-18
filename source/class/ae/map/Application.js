@@ -60,7 +60,10 @@ qx.Class.define("ae.map.Application",
     	  center : ol.proj.fromLonLat([5.41, 35.82]),
           zoom: 4
       })
-      var layer = new ae.map.model.layer.Tile();
+      var layer = new ae.map.model.layer.Tile().set({
+    	  visible:true,
+    	  name:"OSM"
+      });
       layer.setSource(new ae.map.model.source.OSM());
       
       var feature = new ae.map.model.Feature().set({
@@ -87,6 +90,7 @@ qx.Class.define("ae.map.Application",
       
       
       var layer2 = new ae.map.model.layer.Vector().set({
+    	  name : "Points",
     	  source : new ae.map.model.source.Vector().set({
     		  features : features
     	  })
@@ -95,6 +99,7 @@ qx.Class.define("ae.map.Application",
       var f = new qx.data.Array();
       f.push(feature3);
       var layer3 = new ae.map.model.layer.Vector().set({
+    	  name : "LineString",
     	  source : new ae.map.model.source.Vector().set({
     		  features : f
     	  })
@@ -104,33 +109,36 @@ qx.Class.define("ae.map.Application",
       
       layers.push(layer);
       
-      var group = new ae.map.model.layer.Group().set({
+      /*var group = new ae.map.model.layer.Group().set({
     	  name:"TEst",
     	  layers: new qx.data.Array([layer2,layer3])});
 
-      layers.push(group);
+      layers.push(group);*/
+      
+      layers.push(layer2);
+      layers.push(layer3);
 
       
       mapModel.setLayers(layers);
       mapModel.setView(view);
       var map = new ae.map.ui.Map(mapModel);
       
-      var layerTree = new ae.map.ui.LayerTree();
+      var layerList = new ae.map.ui.LayerList();
       
       // Document is the application root
       var doc = this.getRoot();
 
       // Add button to document at fixed coordinates
       var splitpane = new qx.ui.splitpane.Pane();
-      splitpane.add(layerTree);
+      splitpane.add(layerList);
       splitpane.add(map);
       
       doc.add(splitpane, {edge: 50});
       
-      var rootLayer = new ae.map.model.layer.Group().set({name:"Root"});
+      /*var rootLayer = new ae.map.model.layer.Group().set({name:"Root"});
       rootLayer.setLayers(mapModel.getLayers())
-      layerTree.treeController.setModel(rootLayer);
-      //mapModel.bind("layers[1]",layerTree.treeController,"model");
+      layerTree.treeController.setModel(rootLayer);*/
+      mapModel.bind("layers",layerList.controller,"model");
 
     }
   }

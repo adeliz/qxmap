@@ -13,6 +13,11 @@ qx.Class.define("ae.map.model.Feature", {
 			//apply : "_applyCqlfilter",
 			event : "changeGeometry",
 			init : null
+		},
+		
+		properties : {
+			event : "changeGeometry",
+			init : null
 		}
 		
 	},

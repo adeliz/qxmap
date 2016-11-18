@@ -70,10 +70,24 @@ qx.Class.define("ae.map.controller.OpenLayers",
 				var item = e.getData().item;
 				var old = e.getData().old;
 				
-				olMap.getLayers()[1].setVisible(false);
 				console.log(name);
 				
-			});
+				if(value == old){
+					return;
+				}
+				
+				var obj={};
+				
+				if(name.startsWith("layer")){
+					var attr = name.substr(name.indexOf(".")+1);
+					var index =parseInt(name.substring(name.indexOf("[")+1,name.indexOf("]")));
+					
+					if(name.indexOf(".")>0){
+						var length = this.getOlmap().getLayers().getArray().length;
+						this.getOlmap().getLayers().getArray()[length-1-index]["set"+qx.lang.String.firstUp(attr)](value);
+					}
+				}
+			},this);
 			
 			var walk = function(layers,parent){
 				for(var i=0; i<layers.length;i++){
@@ -142,6 +156,41 @@ qx.Class.define("ae.map.controller.OpenLayers",
 			
 			walk(model.getLayers(),this.getOlmap());
 
+			model.addListener("addLayer", function(e){
+				console.log("added");
+				var layer = e.getData();
+				var olLayer;
+				if(layer.classname == "ae.map.model.layer.Vector"){
+					var olFeatures = [];
+					for(var j=0;j<layer.getSource().getFeatures().length;j++){
+						var feature = layer.getSource().getFeatures().getItem(j);
+						var geometry = feature.getGeometry();
+						var olGeometry;
+						switch(geometry.classname){
+							case "ae.map.model.geom.Point" :
+								olGeometry = new ol.geom.Point(geometry.getCoordinates());
+								break;
+							case "ae.map.model.geom.LineString" :
+								olGeometry = new ol.geom.LineString(geometry.getCoordinates());
+								break;
+						}
+						
+						var olFeature = new ol.Feature({
+							geometry : olGeometry
+						});
+
+						olFeatures.push(olFeature);
+					}
+					var olSource = new ol.source.Vector({
+						features : olFeatures
+					});
+
+					olLayer = new ol.layer.Vector({source:olSource});
+					console.log(olLayer);
+					this.getOlmap().getLayers().push(olLayer);
+				}
+						
+			},this);
 		}
 	}
 });
