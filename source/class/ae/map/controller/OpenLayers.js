@@ -65,12 +65,11 @@ qx.Class.define("ae.map.controller.OpenLayers",
 			
 			model.addListener("changeBubble", function(e){
 
+				console.log(e);
 				var name = e.getData().name;
 				var value = e.getData().value;
 				var item = e.getData().item;
 				var old = e.getData().old;
-				
-				console.log(name);
 				
 				if(value == old){
 					return;
@@ -78,26 +77,61 @@ qx.Class.define("ae.map.controller.OpenLayers",
 				
 				var obj={};
 				
+				
 				if(name.startsWith("layer")){
-					var attr = name.substr(name.indexOf(".")+1);
-					var index =parseInt(name.substring(name.indexOf("[")+1,name.indexOf("]")));
 					
-					if(name.indexOf(".")>0){
-						var length = this.getOlmap().getLayers().getArray().length;
-						this.getOlmap().getLayers().getArray()[length-1-index]["set"+qx.lang.String.firstUp(attr)](value);
-					}
+					var properties = this.__getPropertyChainArray(name);
+					console.log(properties);
+					var index = properties.length - 1;
+					var target = this.getOlmap();
+					for (var i = 0; target !== null && i < index; i++) {
+				        try {
+				          var property = properties[i];
+				          console.log(property);
+				          // array notation
+				          var arrIndex = this.__getArrayIndex(property);
+				          
+				          if (arrIndex) {
+				        	console.log(target);
+				            target = target.item(arrIndex);//.getItem(arrIndex);
+				            
+				          }
+				          else {
+				        	console.log(target);
+				            target = target["get" + qx.lang.String.firstUp(property)]();
+				          }
+				        } catch (ex) {
+				          return null;
+				        }
+				      }
+
+					var lastProperty = properties[properties.length - 1];
+					console.log(lastProperty);
+			        // check for array notation
+			        var index = this.__getArrayIndex(lastProperty);
+			        if (index) {
+			          //target.setAt(index, value);
+			        } else {
+			        	console.log(target);
+			          target["set" + qx.lang.String.firstUp(lastProperty)](value);
+			        }
 				}
 			},this);
+			
+			var addL = this.__addLayer;
 			
 			var walk = function(layers,parent){
 				for(var i=0; i<layers.length;i++){
 					var layer = layers.getItem(i);
 					var olLayer;
+					console.log(layer.classname);
 					switch(layer.classname){
 						case "ae.map.model.layer.Group" :
+							
 							var olGroup = new ol.layer.Group({
 								name:layer.getName()
 							});
+							layer.addListener("addLayer", addL,olGroup);
 							parent.getLayers().push(olGroup);
 							walk(layer.getLayers(),olGroup);
 							break;
@@ -156,41 +190,73 @@ qx.Class.define("ae.map.controller.OpenLayers",
 			
 			walk(model.getLayers(),this.getOlmap());
 
-			model.addListener("addLayer", function(e){
-				console.log("added");
-				var layer = e.getData();
-				var olLayer;
-				if(layer.classname == "ae.map.model.layer.Vector"){
-					var olFeatures = [];
-					for(var j=0;j<layer.getSource().getFeatures().length;j++){
-						var feature = layer.getSource().getFeatures().getItem(j);
-						var geometry = feature.getGeometry();
-						var olGeometry;
-						switch(geometry.classname){
-							case "ae.map.model.geom.Point" :
-								olGeometry = new ol.geom.Point(geometry.getCoordinates());
-								break;
-							case "ae.map.model.geom.LineString" :
-								olGeometry = new ol.geom.LineString(geometry.getCoordinates());
-								break;
-						}
-						
-						var olFeature = new ol.Feature({
-							geometry : olGeometry
-						});
-
-						olFeatures.push(olFeature);
+			model.addListener("addLayer", this.__addLayer,this.getOlmap());
+		},
+		
+		__addLayer: function(e){
+			console.log("added");
+			var layer = e.getData();
+			var olLayer;
+			if(layer.classname == "ae.map.model.layer.Vector"){
+				var olFeatures = [];
+				for(var j=0;j<layer.getSource().getFeatures().length;j++){
+					var feature = layer.getSource().getFeatures().getItem(j);
+					var geometry = feature.getGeometry();
+					var olGeometry;
+					switch(geometry.classname){
+						case "ae.map.model.geom.Point" :
+							olGeometry = new ol.geom.Point(geometry.getCoordinates());
+							break;
+						case "ae.map.model.geom.LineString" :
+							olGeometry = new ol.geom.LineString(geometry.getCoordinates());
+							break;
 					}
-					var olSource = new ol.source.Vector({
-						features : olFeatures
+					
+					var olFeature = new ol.Feature({
+						geometry : olGeometry
 					});
 
-					olLayer = new ol.layer.Vector({source:olSource});
-					console.log(olLayer);
-					this.getOlmap().getLayers().push(olLayer);
+					olFeatures.push(olFeature);
 				}
-						
-			},this);
-		}
+				var olSource = new ol.source.Vector({
+					features : olFeatures
+				});
+
+				olLayer = new ol.layer.Vector({source:olSource});
+				console.log(olLayer);
+				this.getLayers().push(olLayer);
+			}
+		},
+		
+		/**
+	     * Converts a property chain string into a list of properties and/or
+	     * array indexes
+	     * @param targetPropertyChain {String} property chain
+	     * @return {String[]} Array of property names
+	     */
+	    __getPropertyChainArray: function(targetPropertyChain) {
+	      // split properties (dot notation) and array indexes (bracket notation)
+	      return targetPropertyChain.replace(/\[/g, ".[").split(".")
+	        .filter(function(prop) {
+	          return prop !== "";
+	        });
+	    },
+	    
+	    /**
+	     * Returns the index from a property using bracket notation, e.g.
+	     * "[42]" returns "42", "[last]" returns "last"
+	     *
+	     * @param propertyName {String} A property name
+	     * @return {String|null} Array index or null if the property name does
+	     * not use bracket notation
+	     */
+	    __getArrayIndex: function(propertyName) {
+	      var arrayExp = /^\[(\d+|last)\]$/;
+	        var arrayMatch = propertyName.match(arrayExp);
+	        if (arrayMatch) {
+	          return  arrayMatch[1];
+	        }
+	        return null;
+	    }
 	}
 });

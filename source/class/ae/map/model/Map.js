@@ -75,7 +75,8 @@ qx.Class.define("ae.map.model.Map", {
 		 * @param layer {map.model.layer.Layer} Layer
 		 */
 		addLayer : function(layer){
-			this.getLayers().insertBefore(this.getLayers().getItem(0),layer);
+			//this.getLayers().insertBefore(this.getLayers().getItem(0),layer);
+			this.getLayers().push(layer);
 			this.fireDataEvent("addLayer",layer);
 		},
 		
