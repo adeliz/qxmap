@@ -81,23 +81,20 @@ qx.Class.define("ae.map.controller.OpenLayers",
 				if(name.startsWith("layer")){
 					
 					var properties = this.__getPropertyChainArray(name);
-					console.log(properties);
 					var index = properties.length - 1;
 					var target = this.getOlmap();
 					for (var i = 0; target !== null && i < index; i++) {
+						var parentTarget = target;
 				        try {
 				          var property = properties[i];
-				          console.log(property);
+
 				          // array notation
 				          var arrIndex = this.__getArrayIndex(property);
 				          
 				          if (arrIndex) {
-				        	console.log(target);
 				            target = target.item(arrIndex);//.getItem(arrIndex);
-				            
 				          }
 				          else {
-				        	console.log(target);
 				            target = target["get" + qx.lang.String.firstUp(property)]();
 				          }
 				        } catch (ex) {
@@ -106,32 +103,32 @@ qx.Class.define("ae.map.controller.OpenLayers",
 				      }
 
 					var lastProperty = properties[properties.length - 1];
-					console.log(lastProperty);
 			        // check for array notation
 			        var index = this.__getArrayIndex(lastProperty);
 			        if (index) {
+			        	//Check if it's push
+			        	if(old.length==0){
+			        		console.log(value);
+			        		console.log(parentTarget);
+			        		this.walk(new qx.data.Array(value),parentTarget);
+			        	}
 			          //target.setAt(index, value);
 			        } else {
-			        	console.log(target);
 			          target["set" + qx.lang.String.firstUp(lastProperty)](value);
 			        }
 				}
 			},this);
 			
-			var addL = this.__addLayer;
-			
-			var walk = function(layers,parent){
+			var walk = this.walk = function(layers,parent){
 				for(var i=0; i<layers.length;i++){
 					var layer = layers.getItem(i);
 					var olLayer;
-					console.log(layer.classname);
+
 					switch(layer.classname){
 						case "ae.map.model.layer.Group" :
-							
 							var olGroup = new ol.layer.Group({
 								name:layer.getName()
 							});
-							layer.addListener("addLayer", addL,olGroup);
 							parent.getLayers().push(olGroup);
 							walk(layer.getLayers(),olGroup);
 							break;
@@ -190,42 +187,10 @@ qx.Class.define("ae.map.controller.OpenLayers",
 			
 			walk(model.getLayers(),this.getOlmap());
 
-			model.addListener("addLayer", this.__addLayer,this.getOlmap());
-		},
-		
-		__addLayer: function(e){
-			console.log("added");
-			var layer = e.getData();
-			var olLayer;
-			if(layer.classname == "ae.map.model.layer.Vector"){
-				var olFeatures = [];
-				for(var j=0;j<layer.getSource().getFeatures().length;j++){
-					var feature = layer.getSource().getFeatures().getItem(j);
-					var geometry = feature.getGeometry();
-					var olGeometry;
-					switch(geometry.classname){
-						case "ae.map.model.geom.Point" :
-							olGeometry = new ol.geom.Point(geometry.getCoordinates());
-							break;
-						case "ae.map.model.geom.LineString" :
-							olGeometry = new ol.geom.LineString(geometry.getCoordinates());
-							break;
-					}
-					
-					var olFeature = new ol.Feature({
-						geometry : olGeometry
-					});
-
-					olFeatures.push(olFeature);
-				}
-				var olSource = new ol.source.Vector({
-					features : olFeatures
-				});
-
-				olLayer = new ol.layer.Vector({source:olSource});
-				console.log(olLayer);
-				this.getLayers().push(olLayer);
-			}
+			/*model.addListener("addLayer", function(e){
+				var layers = new qx.data.Array([e.getData()]);
+				walk(layers,this);
+			},this.getOlmap());*/
 		},
 		
 		/**
