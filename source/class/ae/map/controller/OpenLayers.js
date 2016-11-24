@@ -65,7 +65,7 @@ qx.Class.define("ae.map.controller.OpenLayers",
 			
 			model.addListener("changeBubble", function(e){
 
-				console.log(e);
+				console.log(e.getData());
 				var name = e.getData().name;
 				var value = e.getData().value;
 				var item = e.getData().item;
@@ -106,11 +106,17 @@ qx.Class.define("ae.map.controller.OpenLayers",
 			        // check for array notation
 			        var index = this.__getArrayIndex(lastProperty);
 			        if (index) {
-			        	//Check if it's push
+			        	//Check if it's push action
 			        	if(old.length==0){
 			        		console.log(value);
 			        		console.log(parentTarget);
 			        		this.walk(new qx.data.Array(value),parentTarget);
+			        	}
+			        	//Check if it's remove action
+			        	if(value.length==0){
+			        		console.log(parentTarget);
+			        		console.log(index);
+			        		parentTarget.getLayers().removeAt(index);
 			        	}
 			          //target.setAt(index, value);
 			        } else {

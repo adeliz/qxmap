@@ -86,7 +86,7 @@ qx.Class.define("ae.map.model.Map", {
 		 */
 		removeLayer : function(layer){
 			this.getLayers().remove(layer);
-			this.fireDataEvent("removeLayer",layer);
+			//this.fireDataEvent("removeLayer",layer);
 		},
 
 		/**
