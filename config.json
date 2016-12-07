@@ -41,7 +41,7 @@
   "let" :
   {
     "APPLICATION"  : "ae.map",
-    "QOOXDOO_PATH" : "../../../qooxdoo",
+    "QOOXDOO_PATH" : "../qooxdoo",
     "QXTHEME"      : "ae.map.theme.Theme",
     "API_EXCLUDE"  : ["qx.test.*", "${APPLICATION}.theme.*", "${APPLICATION}.test.*"],
     "LOCALES"      : [ "en" ],
