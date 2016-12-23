@@ -181,8 +181,15 @@ qx.Class.define("ae.map.controller.OpenLayers",
 							var olSource = new ol.source.Vector({
 								features : olFeatures
 							});
+							
 
 							olLayer = new ol.layer.Vector({source:olSource});
+							if(layer.getStyle()){
+								var style = new ol.style.Style({
+									stroke : layer.getStyle().getStroke()
+								});
+								olLayer.setStyle(style);
+							}
 							parent.getLayers().push(olLayer);
 							break;
 					}
