@@ -118,8 +118,18 @@ qx.Class.define("ae.map.controller.OpenLayers",
 			        		//console.log(index);
 			        		parentTarget.getLayers().removeAt(index);
 			        	}
+			        	//Check if it's an update action
+			        	if(value.length>0 && old.length>0){
+			        		//console.log(parentTarget);
+			        		//console.log(index);
+			        		parentTarget.getLayers().removeAt(index);
+			        		this.walk(new qx.data.Array(value),parentTarget);
+			        	}
 			          //target.setAt(index, value);
 			        } else {
+			        	console.log(target);
+			        	console.log(lastProperty);
+			        	console.log(value);
 			          target["set" + qx.lang.String.firstUp(lastProperty)](value);
 			        }
 				}
@@ -173,7 +183,8 @@ qx.Class.define("ae.map.controller.OpenLayers",
 								}
 								
 								var olFeature = new ol.Feature({
-									geometry : olGeometry
+									geometry : olGeometry,
+									properties : feature.getProperties()
 								});
 
 								olFeatures.push(olFeature);

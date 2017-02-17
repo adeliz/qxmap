@@ -3,6 +3,7 @@
  */
 qx.Class.define("ae.map.model.source.Vector", {
 	extend : qx.core.Object,
+	include :  qx.data.marshal.MEventBubbling,
 	
 	properties : {
 
@@ -10,8 +11,8 @@ qx.Class.define("ae.map.model.source.Vector", {
 		 * Source
 		 */
 		features : {
-			//apply : "_applyCqlfilter",
-			event : "changeSource",
+			apply : "_apply",
+			event : "changeFeatures",
 			init : null
 		}
 		
@@ -20,5 +21,11 @@ qx.Class.define("ae.map.model.source.Vector", {
 	construct : function(){
 		this.base(arguments);
 		
+	},
+	
+	members : {
+		_apply : function(value, old, name){
+			this._applyEventPropagation(value, old, name);
+		}
 	}
 });
